@@ -387,6 +387,33 @@
   </entry>
   
   <entry>
+    <title>在swift中属性观察和计算属性的使用</title>
+    <link href="http://tttyyyzzz2020.ghthub.io/2020/02/10/SwiftUI-PropertyObserver/"/>
+    <id>http://tttyyyzzz2020.ghthub.io/2020/02/10/SwiftUI-PropertyObserver/</id>
+    <published>2020-02-10T02:18:43.000Z</published>
+    <updated>2020-08-30T15:01:07.890Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p>属性观察，willSet 将要设置，didSet已经设置</p></blockquote><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyClass</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> date: <span class="type">NSDate</span> &#123;</span><br><span class="line">        <span class="keyword">willSet</span> &#123;</span><br><span class="line">            <span class="keyword">let</span> d = date</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">"即将将日期从 \(d) 设定至 \(newValue)"</span>)</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">didSet</span> &#123;</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">"已经将日期从 \(oldValue) 设定至 \(date)"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">init</span>() &#123;</span><br><span class="line">        date = <span class="type">NSDate</span>()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> foo = <span class="type">MyClass</span>()</span><br><span class="line">foo.date = foo.date.addingTimeInterval(<span class="number">10086</span>)</span><br></pre></td></tr></table></figure><p>属性观察，在属性设置获取时做一些操作, 使用场景如‘详情页面’设置注入变量请求页面数据。</p><blockquote><p>计算属性</p></blockquote><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> number :<span class="type">Int</span> &#123;</span><br><span class="line">        <span class="keyword">get</span> &#123;</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">"get"</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="number">1</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">set</span> &#123;<span class="built_in">print</span>(<span class="string">"set"</span>)&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>属性观察和计算算属性不会同时存在。如果想让计算属性有类是willSet,和didSet功能。可用继承实现</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span>: <span class="title">A</span> </span>&#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">var</span> number: <span class="type">Int</span> &#123;</span><br><span class="line">        <span class="keyword">willSet</span> &#123;<span class="built_in">print</span>(<span class="string">"willSet"</span>)&#125;</span><br><span class="line">        <span class="keyword">didSet</span> &#123;<span class="built_in">print</span>(<span class="string">"didSet"</span>)&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> b = <span class="type">B</span>()</span><br><span class="line">b.number = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出</span></span><br><span class="line"><span class="comment">// get</span></span><br><span class="line"><span class="comment">// willSet</span></span><br><span class="line"><span class="comment">// set</span></span><br><span class="line"><span class="comment">// didSet</span></span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;blockquote&gt;
+&lt;p&gt;属性观察，willSet 将要设置，didSet已经设置&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;figure class=&quot;highlight swift&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span clas
+      
+    
+    </summary>
+    
+    
+    
+      <category term="SwiftUI, Swift" scheme="http://tttyyyzzz2020.ghthub.io/tags/SwiftUI-Swift/"/>
+    
+  </entry>
+  
+  <entry>
     <title>info.plist 功能对照表</title>
     <link href="http://tttyyyzzz2020.ghthub.io/2020/01/08/info.plist%20%E5%AF%B9%E7%85%A7%E8%A1%A8/"/>
     <id>http://tttyyyzzz2020.ghthub.io/2020/01/08/info.plist%20%E5%AF%B9%E7%85%A7%E8%A1%A8/</id>
